@@ -150,7 +150,7 @@ and parse_cmp : token list -> expr * token list =
     | Some EQ ->
         let toks = consume_token EQ toks in
         let e2, toks = parse_sum toks in
-        (Eq (e1, e2), toks)
+        (Equals (e1, e2), toks)
     | Some LT ->
         let toks = consume_token LT toks in
         let e2, toks = parse_sum toks in
