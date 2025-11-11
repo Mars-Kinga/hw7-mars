@@ -123,7 +123,7 @@ and parse_defns : token list -> defn list * token list =
     ([], toks)
 
 and parse_expr : token list -> expr * token list =
-  parse_if_let
+  fun toks -> parse_if_let toks
 
 and parse_if_let : token list -> expr * token list =
   function
