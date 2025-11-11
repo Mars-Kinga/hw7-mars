@@ -185,17 +185,20 @@ and parse_cmp : token list -> expr * token list =
 
 and parse_sum : token list -> expr * token list =
   fun toks ->
-    let e1, toks = parse_app toks in
-    match peek toks with
-    | Some PLUS ->
-        let toks = consume_token PLUS toks in
-        let e2, toks = parse_expr toks in (* right-associative by default *)
-        (Prim2 (Plus, e1, e2), toks)
-    | Some MINUS ->
-        let toks = consume_token MINUS toks in
-        let e2, toks = parse_expr toks in
-        (Prim2 (Minus, e1, e2), toks)
-    | _ -> (e1, toks)
+    let rec loop acc toks =
+      match peek toks with
+      | Some PLUS ->
+          let toks = consume_token PLUS toks in
+          let rhs, toks = parse_app toks in
+          loop (Prim2 (Plus, acc, rhs)) toks
+      | Some MINUS ->
+          let toks = consume_token MINUS toks in
+          let rhs, toks = parse_app toks in
+          loop (Prim2 (Minus, acc, rhs)) toks
+      | _ -> (acc, toks)
+    in
+    let first, toks = parse_app toks in
+    loop first toks
 
 and parse_app : token list -> expr * token list =
   function
