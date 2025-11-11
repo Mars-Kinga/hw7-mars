@@ -1,0 +1,19 @@
+function sorted_insert(n, xs) =
+  if xs = nil
+  then pair(n, nil)
+  else
+    let x = first(xs) in
+    let tail = second(xs) in
+    if n < x
+    then pair(n, xs)
+    else pair(x, sorted_insert(n, tail))
+
+function sort(xs) =
+  if xs = nil
+  then nil
+  else
+    let x = first(xs) in
+    let tail_sorted = sort(second(xs)) in
+    sorted_insert(x, tail_sorted)
+
+sort(pair(3, pair(1, pair(2, nil))))
