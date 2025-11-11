@@ -1,5 +1,5 @@
 function sorted_insert(n, xs) =
-  if xs = nil
+  if is_empty(xs)
   then pair(n, nil)
   else
     let x = left(xs) in
@@ -9,7 +9,7 @@ function sorted_insert(n, xs) =
     else pair(x, sorted_insert(n, tail))
 
 function sort(xs) =
-  if xs = nil
+  if is_empty(xs)
   then nil
   else
     let x = left(xs) in
