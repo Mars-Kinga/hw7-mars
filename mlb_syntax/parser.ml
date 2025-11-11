@@ -150,11 +150,11 @@ and parse_cmp : token list -> expr * token list =
     | Some EQ ->
         let toks = consume_token EQ toks in
         let e2, toks = parse_sum toks in
-        (Equal (e1, e2), toks)
+        (Prim2 (Eq, e1, e2), toks)
     | Some LT ->
         let toks = consume_token LT toks in
         let e2, toks = parse_sum toks in
-        (Lt (e1, e2), toks)
+        (Prim2 (Lt, e1, e2), toks)
     | _ -> (e1, toks)
 
 and parse_sum : token list -> expr * token list =
@@ -164,11 +164,11 @@ and parse_sum : token list -> expr * token list =
     | Some PLUS ->
         let toks = consume_token PLUS toks in
         let e2, toks = parse_expr toks in (* right-associative by default *)
-        (Plus (e1, e2), toks)
+        (Prim2 (Plus, e1, e2), toks)
     | Some MINUS ->
         let toks = consume_token MINUS toks in
         let e2, toks = parse_expr toks in
-        (Minus (e1, e2), toks)
+        (Prim2 (Minus, e1, e2), toks)
     | _ -> (e1, toks)
 
 and parse_app : token list -> expr * token list =
@@ -192,8 +192,8 @@ and parse_app : token list -> expr * token list =
       (match lower with
        | "true" -> (True, toks)
        | "false" -> (False, toks)
-       | "nil" -> (Empty, toks)
-       | _ -> (Id x, toks))
+       | "nil" -> (Nil, toks)
+       | _ -> (Var x, toks))
   | LPAREN :: toks ->
       let e, toks = parse_expr toks in
       let toks = consume_token RPAREN toks in
