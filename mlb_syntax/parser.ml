@@ -120,7 +120,33 @@ let rec parse_program : token list -> program =
 
 and parse_defns : token list -> defn list * token list =
   fun toks ->
-    ([], toks)
+    let rec many acc toks =
+      match toks with
+      | FUNCTION :: toks ->
+          (* name *)
+          let name, toks =
+            match toks with
+            | ID f :: toks -> (f, toks)
+            | _ -> raise (ParseError toks)
+          in
+          (* params *)
+          let toks = consume_token LPAREN toks in
+          let rec params acc toks =
+            match toks with
+            | RPAREN :: toks -> (List.rev acc, toks)
+            | ID x :: COMMA :: toks -> params (x :: acc) toks
+            | ID x :: RPAREN :: toks -> (List.rev (x :: acc), toks)
+            | _ -> raise (ParseError toks)
+          in
+          let args, toks = params [] toks in
+          (* body *)
+          let toks = consume_token EQ toks in
+          let body, toks = parse_expr toks in
+          let d = { name; args; body } in
+          many (d :: acc) toks
+      | _ -> (List.rev acc, toks)
+    in
+    many [] toks
 
 and parse_expr : token list -> expr * token list =
   fun toks -> parse_if_let toks
